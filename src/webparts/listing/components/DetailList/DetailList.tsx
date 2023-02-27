@@ -34,7 +34,7 @@ export type DetailListProps = {
 };
 
 const allItems: DetailItem[] = [];
-for (let i = 0; i < 200; i++) {
+for (let i = 0; i < 50; i++) {
   allItems.push({
     key: i,
     name: 'Item ' + i,
@@ -103,16 +103,15 @@ export const DetailList = ({ items }: DetailListProps): JSX.Element => {
 
   return (
     <div>
-      <div className={StyleSelectItemDetail}>
-        {selectionDetail || 'No Item selected'}
-      </div>
       <TextField
         className={StyleSelectItemDetail}
         label='Filter by name:'
         onChange={handleFilterData}
         styles={textFieldStyles}
       />
-
+      <div className={StyleSelectItemDetail}>
+        {selectionDetail || 'No Item selected'}
+      </div>
       <MarqueeSelection selection={selected}>
         <DetailsList
           items={DetailList}
