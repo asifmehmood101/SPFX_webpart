@@ -1,17 +1,14 @@
 import * as React from 'react';
 
-import {
-  TextField,
-  ITextFieldStyles,
-} from 'office-ui-fabric-react/lib/TextField';
+import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import {
   DetailsList,
   DetailsListLayoutMode,
   Selection,
   IColumn,
-} from 'office-ui-fabric-react/lib/DetailsList';
-import { MarqueeSelection } from 'office-ui-fabric-react/lib/MarqueeSelection';
-import { mergeStyles } from 'office-ui-fabric-react/lib/Styling';
+} from '@fluentui/react/lib/DetailsList';
+import { MarqueeSelection } from '@fluentui/react/lib/MarqueeSelection';
+import { mergeStyles } from '@fluentui/react/lib/Styling';
 
 const StyleSelectItemDetail = mergeStyles({
   display: 'block',
