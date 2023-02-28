@@ -1,6 +1,4 @@
 import * as React from 'react';
-
-import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import {
   DetailsList,
   DetailsListLayoutMode,
@@ -9,15 +7,11 @@ import {
 } from '@fluentui/react/lib/DetailsList';
 import { MarqueeSelection } from '@fluentui/react/lib/MarqueeSelection';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
-
+import axios from 'axios';
 const StyleSelectItemDetail = mergeStyles({
   display: 'block',
   marginBottom: '10px',
 });
-
-const textFieldStyles: Partial<ITextFieldStyles> = {
-  root: { maxWidth: '300px' },
-};
 
 export type DetailItem = {
   key: number;
@@ -30,20 +24,11 @@ export type DetailListProps = {
   selectionDetails?: string;
 };
 
-const allItems: DetailItem[] = [];
-for (let i = 0; i < 50; i++) {
-  allItems.push({
-    key: i,
-    name: 'Item ' + i,
-    value: i,
-  });
-}
-
 export const DetailList = ({ items }: DetailListProps): JSX.Element => {
   const [selectionDetail, setSelectionDetail] = React.useState<string>();
-  const [DetailList, setDetailList] = React.useState(allItems);
-  const [search, setSearch] = React.useState('');
-
+  const [response, setResponse] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<boolean>(false);
   const columns: IColumn[] = [
     {
       key: 'column1',
@@ -62,6 +47,23 @@ export const DetailList = ({ items }: DetailListProps): JSX.Element => {
       isResizable: true,
     },
   ];
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    axios
+      .get(
+        "https://0gzvt.sharepoint.com/sites/listing/_api/web/lists/getbytitle('Book1')/items",
+      )
+      .then((response) => {
+        setResponse(response.data.value);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(true);
+        setIsLoading(false);
+        console.log(error);
+      });
+  }, []);
 
   const selected = new Selection({
     onSelectionChanged: () => setSelectionDetail(getSelectionDetails()),
@@ -82,36 +84,30 @@ export const DetailList = ({ items }: DetailListProps): JSX.Element => {
     }
   }
 
-  const handleFilterData = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSearch(e.target.value);
-  };
+  const ListItem = response.map((item) => {
+    const itemDetail = {
+      key: item.ID,
+      name: item.Title,
+      value: item.ID,
+    };
 
-  React.useEffect(() => {
-    const searchResult = search
-      ? allItems.filter((i) => i.name.toLowerCase().indexOf(search) > -1)
-      : allItems;
-    setDetailList(searchResult);
-    console.log('search');
-  }, [search]);
+    return itemDetail;
+  });
 
   const getitemDetail = (item: DetailItem): void => {
     alert(`Item invoked: ${item.name}`);
   };
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   return (
     <div>
-      <TextField
-        className={StyleSelectItemDetail}
-        label='Filter by name:'
-        onChange={handleFilterData}
-        styles={textFieldStyles}
-      />
       <div className={StyleSelectItemDetail}>
         {selectionDetail || 'No Item selected'}
       </div>
       <MarqueeSelection selection={selected}>
         <DetailsList
-          items={DetailList}
+          items={ListItem}
           columns={columns}
           setKey='set'
           layoutMode={DetailsListLayoutMode.justified}
