@@ -19,12 +19,7 @@ export type DetailItem = {
   value: number;
 };
 
-export type DetailListProps = {
-  items?: DetailItem[];
-  selectionDetails?: string;
-};
-
-export const DetailList = ({ items }: DetailListProps): JSX.Element => {
+export const DetailList = (): JSX.Element => {
   const [selectionDetail, setSelectionDetail] = React.useState<string>();
   const [response, setResponse] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -85,7 +80,7 @@ export const DetailList = ({ items }: DetailListProps): JSX.Element => {
   }
 
   const ListItem = response.map((item) => {
-    const itemDetail = {
+    const itemDetail: DetailItem = {
       key: item.ID,
       name: item.Title,
       value: item.ID,
